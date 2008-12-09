@@ -1,0 +1,3 @@
+Name = "Authentication"
+Description = "Handles authentication of users"
+Authors = ['Lucas van Dijk']

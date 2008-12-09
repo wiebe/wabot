@@ -1,0 +1,3 @@
+Name = "Radio"
+Description = "Geeft het huidige nummer voor verschillende radio stations"
+Authors = ['Lucas van Dijk']

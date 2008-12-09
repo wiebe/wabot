@@ -1,0 +1,3 @@
+Name = "Last.FM"
+Description = "Retreives last.fm data from your profile and displays it in the channel"
+Authors = ['Lucas van Dijk']

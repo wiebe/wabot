@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+#
+# LuckyBot4, a python IRC bot
+# (c) Copyright 2008 by Lucas van Dijk
+# http://www.return1.net
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA
+#
+# $Id$
+#
+
+import sys
+import optparse
+from luckybot import __version__
+import luckybot.path
+from luckybot.bot import main
+
+luckybot.path.init()
+
+def run():
+	parser = optparse.OptionParser(usage="%prog [options]", version="LuckyBot %s" % __version__)
+	parser.add_option('-g', '--no-gui', dest="gui", default=True, action="store_false", help="Start the bot in console mode, without GUI")
+	
+	options, args = parser.parse_args(sys.argv)	
+	
+	#import luckybot
+	bot = main.LuckyBot(options, args)
+	
+	if options.gui == False:
+		import luckybot.views.console
+		view = luckybot.views.console.ConsoleView()
+	else:
+		import luckybot.views.gui
+		view = luckybot.views.gui.GUIView()
+		
+	bot.set_view(view)
+		
+	
+if __name__ == "__main__":
+	run()

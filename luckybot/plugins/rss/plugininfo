@@ -1,0 +1,3 @@
+Name = "RSS Reader"
+Description = "Reads given RSS feeds, and displays the last items."
+Authors = ['Lucas van Dijk']

@@ -1,0 +1,3 @@
+Name = "Plugin Managment"
+Description = "Load, unload or reload plugins from the bot"
+Authors = ['Lucas van Dijk']

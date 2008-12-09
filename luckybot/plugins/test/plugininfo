@@ -1,0 +1,3 @@
+Name = "Test Plugin"
+Description = "Just a simple testing Plugin"
+Authors = ['Lucas van Dijk <info@return1.net']
