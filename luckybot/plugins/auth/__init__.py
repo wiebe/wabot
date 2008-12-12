@@ -1,5 +1,5 @@
 #
-# Luckyluckybot4, a python IRC luckybot
+# LuckyBot4, a python IRC luckybot
 # (c) Copyright 2008 by Lucas van Dijk
 # http://www.return1.net
 #

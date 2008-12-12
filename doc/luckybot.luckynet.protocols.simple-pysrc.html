@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>luckybot.luckynet.protocols.simple</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="luckybot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >LuckyBot</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="luckybot-module.html">Package&nbsp;luckybot</a> ::
+        <a href="luckybot.luckynet-module.html">Package&nbsp;luckynet</a> ::
+        <a href="luckybot.luckynet.protocols-module.html">Package&nbsp;protocols</a> ::
+        Module&nbsp;simple
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="luckybot.luckynet.protocols.simple-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="luckybot.luckynet.protocols.simple-module.html">Module luckybot.luckynet.protocols.simple</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># LuckyBot4, a python IRC bot</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># (c) Copyright 2008 by Lucas van Dijk</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># http://www.return1.net</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">#</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># This program is free software; you can redistribute it and/or modify</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># it under the terms of the GNU General Public License as published by</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># the Free Software Foundation; either version 3, or (at your option)</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># any later version.</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">#</tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># This program is distributed in the hope that it will be useful,</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># but WITHOUT ANY WARRANTY; without even the implied warranty of</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># GNU General Public License for more details.</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">#</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># You should have received a copy of the GNU General Public License</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># along with this program; if not, write to the Free Software</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">#</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment"># $Id$</tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-comment"></tt><tt class="py-comment">#</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"><tt class="py-comment"></tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package luckybot=luckybot-module.html"><a title="luckybot" class="py-name" href="#" onclick="return doclink('link-0', 'luckybot', 'link-0');">luckybot</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Package luckybot.luckynet=luckybot.luckynet-module.html"><a title="luckybot.luckynet" class="py-name" href="#" onclick="return doclink('link-1', 'luckynet', 'link-1');">luckynet</a></tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Variable luckybot.luckynet.connection.Connection.protocol=luckybot.luckynet.connection.Connection-class.html#protocol,Module luckybot.luckynet.protocol=luckybot.luckynet.protocol-module.html"><a title="luckybot.luckynet.connection.Connection.protocol
+luckybot.luckynet.protocol" class="py-name" href="#" onclick="return doclink('link-2', 'protocol', 'link-2');">protocol</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Class luckybot.luckynet.protocol.Protocol=luckybot.luckynet.protocol.Protocol-class.html"><a title="luckybot.luckynet.protocol.Protocol" class="py-name" href="#" onclick="return doclink('link-3', 'Protocol', 'link-3');">Protocol</a></tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"> </tt>
+<a name="LineProtocol"></a><div id="LineProtocol-def"><a name="L25"></a><tt class="py-lineno">25</tt> <a class="py-toggle" href="#" id="LineProtocol-toggle" onclick="return toggle('LineProtocol');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="luckybot.luckynet.protocols.simple.LineProtocol-class.html">LineProtocol</a><tt class="py-op">(</tt><tt class="py-base-class">Protocol</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LineProtocol-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="LineProtocol-expanded"><a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line"><tt class="py-docstring">                Simple protocol which reads lines</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">         </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">        <tt id="link-4" class="py-name" targets="Variable luckybot.luckynet.protocols.simple.LineProtocol.received_buffer=luckybot.luckynet.protocols.simple.LineProtocol-class.html#received_buffer"><a title="luckybot.luckynet.protocols.simple.LineProtocol.received_buffer" class="py-name" href="#" onclick="return doclink('link-4', 'received_buffer', 'link-4');">received_buffer</a></tt> <tt class="py-op">=</tt> <tt class="py-string">""</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">         </tt>
+<a name="LineProtocol.send"></a><div id="LineProtocol.send-def"><a name="L32"></a><tt class="py-lineno">32</tt> <a class="py-toggle" href="#" id="LineProtocol.send-toggle" onclick="return toggle('LineProtocol.send');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="luckybot.luckynet.protocols.simple.LineProtocol-class.html#send">send</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">data</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LineProtocol.send-collapsed" style="display:none;" pad="++" indent="++++++++++++"></div><div id="LineProtocol.send-expanded"><a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line"><tt class="py-docstring">                        Sends the given data, and automaticly adds a newline to the </tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line"><tt class="py-docstring">                        end</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line"><tt class="py-docstring">                        </tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line"><tt class="py-docstring">                        @type data: string</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line"><tt class="py-docstring">                        @param data: The data to send</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">                 </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt id="link-5" class="py-name"><a title="luckybot.luckynet.protocol.Protocol" class="py-name" href="#" onclick="return doclink('link-5', 'Protocol', 'link-3');">Protocol</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Method luckybot.luckynet.connection.Connection.send()=luckybot.luckynet.connection.Connection-class.html#send,Method luckybot.luckynet.connection.GlibConnection.send()=luckybot.luckynet.connection.GlibConnection-class.html#send,Method luckybot.luckynet.protocol.Protocol.send()=luckybot.luckynet.protocol.Protocol-class.html#send,Method luckybot.luckynet.protocols.simple.LineProtocol.send()=luckybot.luckynet.protocols.simple.LineProtocol-class.html#send"><a title="luckybot.luckynet.connection.Connection.send
+luckybot.luckynet.connection.GlibConnection.send
+luckybot.luckynet.protocol.Protocol.send
+luckybot.luckynet.protocols.simple.LineProtocol.send" class="py-name" href="#" onclick="return doclink('link-6', 'send', 'link-6');">send</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-string">"%s\n"</tt> <tt class="py-op">%</tt> <tt class="py-name">data</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">         </tt>
+<a name="LineProtocol.on_data"></a><div id="LineProtocol.on_data-def"><a name="L43"></a><tt class="py-lineno">43</tt> <a class="py-toggle" href="#" id="LineProtocol.on_data-toggle" onclick="return toggle('LineProtocol.on_data');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="luckybot.luckynet.protocols.simple.LineProtocol-class.html#on_data">on_data</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">data</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LineProtocol.on_data-collapsed" style="display:none;" pad="++" indent="++++++++++++"></div><div id="LineProtocol.on_data-expanded"><a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line"><tt class="py-docstring">                        Called when it's time to read something from the socket</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line"><tt class="py-docstring">                        So this function reads some data from the server and adds </tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line"><tt class="py-docstring">                        it to the buffer</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-7" class="py-name"><a title="luckybot.luckynet.protocols.simple.LineProtocol.received_buffer" class="py-name" href="#" onclick="return doclink('link-7', 'received_buffer', 'link-4');">received_buffer</a></tt> <tt class="py-op">+=</tt> <tt class="py-name">data</tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">                 </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Method luckybot.luckynet.protocols.simple.LineProtocol.check_buffer()=luckybot.luckynet.protocols.simple.LineProtocol-class.html#check_buffer"><a title="luckybot.luckynet.protocols.simple.LineProtocol.check_buffer" class="py-name" href="#" onclick="return doclink('link-8', 'check_buffer', 'link-8');">check_buffer</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">         </tt>
+<a name="LineProtocol.check_buffer"></a><div id="LineProtocol.check_buffer-def"><a name="L53"></a><tt class="py-lineno">53</tt> <a class="py-toggle" href="#" id="LineProtocol.check_buffer-toggle" onclick="return toggle('LineProtocol.check_buffer');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="luckybot.luckynet.protocols.simple.LineProtocol-class.html#check_buffer">check_buffer</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="LineProtocol.check_buffer-collapsed" style="display:none;" pad="++" indent="++++++++++++"></div><div id="LineProtocol.check_buffer-expanded"><a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line"><tt class="py-docstring">                        This function checks if the buffer contains a new line</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">                 </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">                <tt class="py-name">pos</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-9" class="py-name"><a title="luckybot.luckynet.protocols.simple.LineProtocol.received_buffer" class="py-name" href="#" onclick="return doclink('link-9', 'received_buffer', 'link-4');">received_buffer</a></tt><tt class="py-op">.</tt><tt class="py-name">find</tt><tt class="py-op">(</tt><tt class="py-string">"\n"</tt><tt class="py-op">)</tt> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">                 </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">pos</tt> <tt class="py-op">!=</tt> <tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">                        <tt class="py-name">data</tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="luckybot.luckynet.protocols.simple.LineProtocol.received_buffer" class="py-name" href="#" onclick="return doclink('link-10', 'received_buffer', 'link-4');">received_buffer</a></tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">:</tt><tt class="py-name">pos</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">                         </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-string">'on_line_received'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">                                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Method luckybot.bot.client.LuckyBotClient.on_line_received()=luckybot.bot.client.LuckyBotClient-class.html#on_line_received,Method luckybot.luckynet.protocols.irc.IRCClient.on_line_received()=luckybot.luckynet.protocols.irc.IRCClient-class.html#on_line_received"><a title="luckybot.bot.client.LuckyBotClient.on_line_received
+luckybot.luckynet.protocols.irc.IRCClient.on_line_received" class="py-name" href="#" onclick="return doclink('link-11', 'on_line_received', 'link-11');">on_line_received</a></tt><tt class="py-op">(</tt><tt class="py-name">data</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">                         </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line">                        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name"><a title="luckybot.luckynet.protocols.simple.LineProtocol.received_buffer" class="py-name" href="#" onclick="return doclink('link-12', 'received_buffer', 'link-4');">received_buffer</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="luckybot.luckynet.protocols.simple.LineProtocol.received_buffer" class="py-name" href="#" onclick="return doclink('link-13', 'received_buffer', 'link-4');">received_buffer</a></tt><tt class="py-op">[</tt><tt class="py-name">pos</tt><tt class="py-op">+</tt><tt class="py-number">1</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">                         </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">                        <tt class="py-keyword">if</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name"><a title="luckybot.luckynet.protocols.simple.LineProtocol.received_buffer" class="py-name" href="#" onclick="return doclink('link-14', 'received_buffer', 'link-4');">received_buffer</a></tt><tt class="py-op">.</tt><tt class="py-name">find</tt><tt class="py-op">(</tt><tt class="py-string">"\n"</tt><tt class="py-op">)</tt> <tt class="py-op">!=</tt> <tt class="py-op">-</tt><tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line">                                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="luckybot.luckynet.protocols.simple.LineProtocol.check_buffer" class="py-name" href="#" onclick="return doclink('link-15', 'check_buffer', 'link-8');">check_buffer</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="luckybot-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >LuckyBot</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0beta1 on Sun Oct 26 12:24:31 2008
+    </td>
+    <td align="right" class="footer">
+      <a href="http://epydoc.sourceforge.net">http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie()
+  // -->
+</script>
+  
+</body>
+</html>

@@ -76,7 +76,6 @@ class LuckyBotClient(irc.IRCClient, gobject.GObject):
 			@param message: The IRC Message
 		"""
 		data = str(message)
-		print data
 		if data[0:4] == 'PING':
 			# Reply to ping
 			self.send('PONG :%s' % data[6:])

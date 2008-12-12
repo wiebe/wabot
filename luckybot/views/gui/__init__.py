@@ -42,7 +42,7 @@ from gettext import gettext as _
 
 gtk.gdk.threads_init()
 
-class GUIView(luckybot.views.base.BaseView, gobject.GObject):
+class GUIView(luckybot.views.base.BaseView, gobject.GObject): 
 	"""
 		This class represents the main LuckyBot window
 	"""

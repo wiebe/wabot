@@ -24,6 +24,7 @@ import sys
 import os
 import re 
 import luckybot.path as path
+from luckybot.language import Language
 from ConfigParser import SafeConfigParser
 
 REGEXP_RAW = 1
@@ -44,6 +45,8 @@ class Plugin(object):
 		self.dirname = dirname
 		self.manager = manager
 		self.bot = manager.bot
+		
+		self.lang = Language(self.bot.settings.get('Bot', 'language'))
 		
 	def load(self):	
 		"""
@@ -81,10 +84,21 @@ class Plugin(object):
 		self.plugin_info = self._read_metadata()
 		self.plugin_info['dirname'] = self.dirname
 		
+		self._load_language()
+		
 		self._instance.plugin = self
 
 		if hasattr(self._instance, 'initialize'):
 			self._instance.initialize()
+	
+	def _load_language(self):
+		"""
+			Checks if the plugin has a language file, and reads it, 
+			if there's one
+		"""
+		
+		if os.path.exists(os.path.join(self.plugins_dir, self.dirname, 'language.ini')):
+			self.lang.read_language(os.path.join(self.plugins_dir, self.dirname, 'language.ini'))
 		
 	def unload(self):
 		"""

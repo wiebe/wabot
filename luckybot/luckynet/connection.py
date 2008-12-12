@@ -43,6 +43,10 @@ class GlibConnection:
 		self._buffer = []
 		self._io_condition = 0
 		self._watch_id = 0
+		
+	def set_protocol(self, protocol):
+		self.protocol = protocol
+		self.protocol.set_connection(self)
 	
 	def open(self, addr):
 		"""
@@ -84,7 +88,7 @@ class GlibConnection:
 		try:
 			self._socket.close()
 			del self._socket
-			self.fileno = -1
+			self._fileno = -1
 			self.connected = False
 			
 			self.handle_close_event()
@@ -298,4 +302,17 @@ class GlibConnection:
 			self._fileno = self._socket.fileno()
 		
 		return self._fileno
+	
+	def __getattr__(self, name):
+		"""
+			Redirect calls to our socket object
+		
+			@type name: string
+			@param name: Attribute name
+		"""
+		
+		if hasattr(self._socket, name):
+			return getattr(self._socket, name)
+		else:
+			raise AttributeError, 'Undefined attribute %s' % name
 		
