@@ -193,7 +193,23 @@ class Format(object):
 		"""
 			Underline the text
 		"""
-		return "\x1F"	
+		return "\x1F"
+	
+	@classmethod
+	def remove(self, string):
+		"""
+			Remove all format in the given string
+			
+			@type string: str
+			@param string: The string where to remove format from
+			
+			@rtype: str
+			@return: The string without format
+		"""
+		
+		regexp = re.compile('(?:(?:\x03[0-9]+)|(?:\x0F|\x02|\x16|\x1F))', re.I)
+		
+		return regexp.sub('', string)
 
 class IRCClient(LineProtocol):
 	"""
