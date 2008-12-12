@@ -203,12 +203,13 @@ class IRCClient(LineProtocol):
 	nickname = ""
 	invisible = True
 	
-	def __init__(self, nickname, invisible = True):
+	def __init__(self, nickname, password, invisible = True):
 		"""
 			Sets some vars
 		"""
 		
 		self.nickname = nickname
+		self.password = password
 		self.invisible = invisible
 		
 	def handle_connect(self):
@@ -220,7 +221,11 @@ class IRCClient(LineProtocol):
 		"""
 		
 		self.send('USER %s %d * :%s' % (self.nickname, 1 if self.invisible else 0, self.nickname))
+		
 		self.set_nick(self.nickname)
+		
+		if self.password:
+			self.send_pm('nickserv', 'identify %s' % self.password)
 	
 	def on_line_received(self, data):
 		"""

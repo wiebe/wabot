@@ -92,7 +92,7 @@ class LuckyBot(object):
 			port = self.settings.getint('Server', 'port')
 				
 		connection = self.view.get_connection()
-		protocol = LuckyBotClient(self, self.settings.get('Bot', 'nickname'), self.settings.getboolean('Bot', 'invisible'))
+		protocol = LuckyBotClient(self, self.settings.get('Bot', 'nickname'), self.settings.get('Bot', 'password'), self.settings.getboolean('Bot', 'invisible'))
 		protocol.connect('irc-message', self.on_message)
 		protocol.connect('data-sent', self.on_data_sent)
 		protocol.connect('data-received', self.on_data_received)

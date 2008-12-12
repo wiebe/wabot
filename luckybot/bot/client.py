@@ -35,13 +35,13 @@ class LuckyBotClient(irc.IRCClient, gobject.GObject):
 		'closed': (gobject.SIGNAL_RUN_LAST, None, ())
 	}
 	
-	def __init__(self, bot, nickname, invisible):
+	def __init__(self, bot, nickname, password, invisible = True):
 		"""
 			Constructor, calls parent constructors
 		"""
 		
 		gobject.GObject.__init__(self)
-		irc.IRCClient.__init__(self, nickname, invisible)
+		irc.IRCClient.__init__(self, nickname, password, invisible)
 		self.bot = bot
 	
 	def handle_write(self):
