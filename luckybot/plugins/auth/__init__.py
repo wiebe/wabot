@@ -21,7 +21,6 @@
 #
 
 import base64
-import re
 from gettext import gettext as _
 
 def initialize():	

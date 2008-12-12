@@ -22,7 +22,7 @@
 
 from ConfigParser import SafeConfigParser
 
-class Language:
+class Language(object):
 	def __init__(self, language, defaults = {}):
 		self.language = language.lower()
 		self.parser = SafeConfigParser(defaults)

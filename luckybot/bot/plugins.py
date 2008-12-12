@@ -24,8 +24,8 @@ import sys
 import os
 import re 
 import luckybot.path as path
-from luckybot.language import Language
-from ConfigParser import SafeConfigParser
+from luckybot.bot.language import Language
+from ConfigParser import SafeConfigParser, NoOptionError
 
 REGEXP_RAW = 1
 REGEXP_MESSAGE = 2
@@ -46,7 +46,10 @@ class Plugin(object):
 		self.manager = manager
 		self.bot = manager.bot
 		
-		self.lang = Language(self.bot.settings.get('Bot', 'language'))
+		try:
+			self.lang = Language(self.bot.settings.get('Bot', 'language'))
+		except NoOptionError:
+			self.lang = Language('english')
 		
 	def load(self):	
 		"""

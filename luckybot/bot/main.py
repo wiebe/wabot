@@ -47,7 +47,7 @@ class LuckyBot(object):
 		if os.path.exists(path.get_personal_file('settings.ini')):
 			self.settings.read([path.get_personal_file('settings.ini')])
 		else:
-			self.settings.read(path.get_base_path('settings.ini'))
+			self.settings.read(path.get_base_path('data', 'settings.ini'))
 			
 		self.plugins = plugins.Manager(self)
 		self.auth = auth.Manager()
