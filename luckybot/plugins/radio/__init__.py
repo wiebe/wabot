@@ -30,6 +30,7 @@ except ImportError:
 		
 import urllib2 as urllib
 from luckybot.luckynet.protocols.irc import Format
+from luckybot.bot.plugins import Plugin
 
 def get_xml(url):
 	data = urllib.urlopen(url)
@@ -101,6 +102,8 @@ class Radio_3fm(BaseRadio):
 	
 	def get_stream_url(self):
 		return 'http://cgi.omroep.nl/cgi-bin/shoutcastlive.pls?radio3live'
+
+class RadioPlugin(Plugin):
 
 def initialize():
 	plugin.register_command('radio', get_radio_np, help="Geeft wat er nu speelt op een bepaalde radio", args="radio_name")

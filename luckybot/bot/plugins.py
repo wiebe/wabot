@@ -24,6 +24,8 @@ import sys
 import os
 import re 
 import luckybot.path as path
+import imp
+import inspect
 from luckybot.bot.language import Language
 from ConfigParser import SafeConfigParser, NoOptionError
 
@@ -68,31 +70,15 @@ class Plugin(object):
 		self.commands = {}		
 		self.regexps = []
 		self.message_handler = None
-
-		oldpath = sys.path
-		
-		try:
-			if self.dirname in sys.modules:
-				del sys.modules[self.dirname]
-				
-			sys.path.insert(0, self.plugins_dir)
-			self._instance = __import__(self.dirname)
-		
-			if not self._instance or self._instance == None:
-				raise PluginException, 'Could not load plugin', self.dirname
-		finally:
-			sys.path = oldpath
 		
 		# read plugin meta data
 		self.plugin_info = self._read_metadata()
 		self.plugin_info['dirname'] = self.dirname
 		
 		self._load_language()
-		
-		self._instance.plugin = self
 
-		if hasattr(self._instance, 'initialize'):
-			self._instance.initialize()
+		if hasattr(self, 'initialize'):
+			self.initialize()
 	
 	def _load_language(self):
 		"""
@@ -108,15 +94,13 @@ class Plugin(object):
 			Unloads the plugin
 		"""
 		
-		if hasattr(self._instance, 'destroy'):
-			self._instance.destroy()		
+		if hasattr(self, 'destroy'):
+			self.destroy()		
 		
 		del self.commands
 		del self.regexps
 		del self.message_handler
 		del self.plugin_info
-		
-		del self._instance
 		
 	
 	def _read_metadata(self):
@@ -352,8 +336,32 @@ class Manager(object):
 		if not os.path.isdir(os.path.join(dir, name)):
 			return False
 		
+		path = os.path.join(dir, name)
+		
 		try:
-			plugin = Plugin(self, dir, name)
+			sys.path.insert(0, path)
+			module_obj = imp.load_source(name, os.path.join(path,'__init__.py'))
+			sys.path = sys.path[1:]
+			
+			plugin_cls = None
+			
+			print name
+			print '-' * 30
+			print
+			for cls in module_obj.__dict__.values():
+				if hasattr(cls, '__module__'):				
+					if  inspect.isclass(cls) and cls.__module__ == name:
+						print cls.__module__
+						print cls
+						print			
+						if issubclass(cls, Plugin):
+							plugin_cls = cls
+							break
+					
+			if plugin_cls == None:
+				raise PluginException, "No plugin class defined"
+			
+			plugin = plugin_cls(self, dir, name)
 			plugin.load()
 		except Exception, e:
 			import traceback
@@ -361,7 +369,7 @@ class Manager(object):
 			self.bot.view.error('Could not load plugin %s' % name)
 			return False
 		
-		self.plugins[name] = plugin	
+		self.plugins[name] = plugin
 		return True	
 	
 	def unload_plugins(self):

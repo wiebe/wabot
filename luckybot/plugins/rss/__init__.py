@@ -28,6 +28,7 @@ except ImportError:
 	except ImportError:
 		raise
 
+from luckybot.bot.plugins import Plugin
 from luckybot.luckynet.protocols.irc import Format
 from pysqlite2 import dbapi2 as sqlite
 import re
@@ -90,14 +91,19 @@ class RssFeed(object):
 	def __iter__(self):
 		return iter(self.items)
 		
-class RssPlugin(object):
+class RssPlugin(Plugin):
 	"""
 		Class which handles the plugin commands etc
 	"""
 	
-	def __init__(self, plugin):		
+	def initialize(self):
+		# Register commands
+		self.register_command('rss', self.read_feed, help="Display the last entries of a given feed name or URL", args="name|url")
+		self.register_command('addfeed', self.add_feed, help="Add a feed", args="name url")
+		self.register_command('reviewfeed', self.review_feeds, help="View unreviewed feeds or review a feed", args="(id yes|no)")
+		
 		# Setup database connection
-		self.connection = sqlite.connect(os.path.join(plugin.plugins_dir, plugin.dirname, 'rss.db'))
+		self.connection = sqlite.connect(os.path.join(self.plugins_dir, self.dirname, 'rss.db'))
 		
 		cursor = self.connection.cursor()
 		
@@ -113,8 +119,6 @@ class RssPlugin(object):
 		cursor.execute(sql)
 		self.connection.commit()
 		cursor.close()
-		
-		self.plugin = plugin
 	
 	def _validate_url(self, url):
 		regexp = re.compile('([\w]+?://[\w\#$%&~/.\-;:=,?@\[\]+]*)$')
@@ -128,17 +132,17 @@ class RssPlugin(object):
 			if not self._validate_url(url):
 				url = self.get_url(url)
 				if url == None:
-					raise RssException, self.plugin.lang.get('not_found')
+					raise RssException, self.lang.get('not_found')
 			
 			rss = RssFeed(url)
 			rss.parse(5)
 			
-			self.plugin.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + rss.title)
+			self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + rss.title)
 			for item in rss:
 				send = "[ %s%s%s ] - %s" % (Format.color('red'), item['link'], Format.normal(), item['title'])
-				self.plugin.bot.client.send_pm(message.channel, send)
+				self.bot.client.send_pm(message.channel, send)
 		except RssException, error:
-			self.plugin.bot.client.send_pm(message.channel, error)
+			self.bot.client.send_pm(message.channel, error)
 	
 	def get_url(self, name):
 		cursor = self.connection.cursor()
@@ -161,26 +165,26 @@ class RssPlugin(object):
 			url = Format.remove(args[1])
 			# Check URL
 			if not self._validate_url(url):
-				raise RssException, self.plugin.lang.get(('invalid_url'))
+				raise RssException, self.lang.get('invalid_url')
 			
 			name = Format.remove(args[0])
 			
 			regexp = re.compile('^[a-zA-Z0-9\-_.]+$')
 			if not regexp.match(name):
-				raise RssException, self.plugin.lang.get('invalid_name')
+				raise RssException, self.lang.get('invalid_name')
 			
 			cursor = self.connection.cursor()
 			cursor.execute('INSERT INTO feeds (name, url) VALUES (?, ?)', (name, url))
 			self.connection.commit()
 			cursor.close()
 			
-			self.plugin.bot.client.send_notice(message.nick, plugin.lang.get('feed_added'))
+			self.bot.client.send_notice(message.nick, plugin.lang.get('feed_added'))
 		except RssException, error:
-			plugin.bot.client.send_pm(message.channel, error)
+			self.bot.client.send_pm(message.channel, error)
 	
 	def review_feeds(self, message, keywords):
-		if not self.plugin.bot.auth.check_logged_in(message.nick):
-			self.plugin.bot.client.send_notice(message.nick, self.plugin.lang.get('access_denied'))
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, self.plugin.lang.get('access_denied'))
 			return
 		
 		args = message.bot_args.split()
@@ -190,23 +194,21 @@ class RssPlugin(object):
 			cursor = self.connection.cursor()
 			cursor.execute('SELECT * FROM feeds WHERE moderated = 0 ORDER BY id ASC')
 			
-			self.plugin.bot.client.send_notice(message.nick,  \
+			self.bot.client.send_notice(message.nick,  \
 				Format.color('darkblue') + Format.bold() +  \
-				self.plugin.lang.get('unreviewed_feeds'))
+				self.lang.get('unreviewed_feeds'))
 			for row in cursor:
-				self.plugin.bot.client.send_notice(message.nick, \
+				self.bot.client.send_notice(message.nick, \
 					"%s%s:%s %d %s%s:%s %s" % (Format.bold(),
-						plugin.lang.get('id'), Format.bold(), int(row[0]),
+						self.lang.get('id'), Format.bold(), int(row[0]),
 						Format.bold(), plugin.lang.get('url'), 
 						Format.bold(), row[2]
 					)
 				)
 		elif len(args) == 2:
 			if not args[0].isdigit():
-				self.plugin.bot.client.send_notice(message.nick, self.plugin.lang.get('invalid_id'))
+				self.bot.client.send_notice(message.nick, self.plugin.lang.get('invalid_id'))
 				return
-			
-			print args[0]
 			
 			# Review a feed
 			if args[1] in ['ok', 'good', 'yes']:
@@ -224,32 +226,13 @@ class RssPlugin(object):
 				self.connection.commit()
 				cursor.close()
 				
-				self.plugin.bot.client.send_notice(message.nick, self.plugin.lang.get('feed_reviewed'))
+				self.bot.client.send_notice(message.nick, self.lang.get('feed_reviewed'))
 			else:
-				self.plugin.bot.client.send_notice(message.nick, self.plugin.lang.get('review_syntax').replace('!', self.plugin.bot.settings.get('Bot', 'command_prefix')))
+				self.bot.client.send_notice(message.nick, self.lang.get('review_syntax').replace('!', self.bot.settings.get('Bot', 'command_prefix')))
 		else:
-			self.plugin.bot.client.send_notice(message.nick, self.plugin.lang.get('review_syntax').replace('!', self.plugin.bot.settings.get('Bot', 'command_prefix')))
- 					
-					
+			self.bot.client.send_notice(message.nick, self.plugin.lang.get('review_syntax').replace('!', self.bot.settings.get('Bot', 'command_prefix')))			
 	
-	def __del__(self):
+	def destroy(self):
 		self.connection.commit()
 		self.connection.close()
-		del self.plugin
-		
-rss = None
-
-def initialize():
-	global rss
-	
-	rss = RssPlugin(plugin)
-	
-	plugin.register_command('rss', rss.read_feed, help="Display the last entries of a given feed name or URL", args="name|url")
-	plugin.register_command('addfeed', rss.add_feed, help="Add a feed", args="name url")
-	plugin.register_command('reviewfeed', rss.review_feeds, help="View unreviewed feeds or review a feed", args="(id yes|no)")
-
-def destroy():
-	global rss
-	
-	del rss
 	
