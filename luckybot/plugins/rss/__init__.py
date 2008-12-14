@@ -178,13 +178,13 @@ class RssPlugin(Plugin):
 			self.connection.commit()
 			cursor.close()
 			
-			self.bot.client.send_notice(message.nick, plugin.lang.get('feed_added'))
+			self.bot.client.send_notice(message.nick, self.lang.get('feed_added'))
 		except RssException, error:
 			self.bot.client.send_pm(message.channel, error)
 	
 	def review_feeds(self, message, keywords):
 		if not self.bot.auth.check_logged_in(message.nick):
-			self.bot.client.send_notice(message.nick, self.plugin.lang.get('access_denied'))
+			self.bot.client.send_notice(message.nick, self.lang.get('access_denied'))
 			return
 		
 		args = message.bot_args.split()
@@ -201,13 +201,13 @@ class RssPlugin(Plugin):
 				self.bot.client.send_notice(message.nick, \
 					"%s%s:%s %d %s%s:%s %s" % (Format.bold(),
 						self.lang.get('id'), Format.bold(), int(row[0]),
-						Format.bold(), plugin.lang.get('url'), 
+						Format.bold(), self.lang.get('url'), 
 						Format.bold(), row[2]
 					)
 				)
 		elif len(args) == 2:
 			if not args[0].isdigit():
-				self.bot.client.send_notice(message.nick, self.plugin.lang.get('invalid_id'))
+				self.bot.client.send_notice(message.nick, self.lang.get('invalid_id'))
 				return
 			
 			# Review a feed
@@ -218,7 +218,7 @@ class RssPlugin(Plugin):
 				self.connection.commit()
 				cursor.close()
 				
-				self.plugin.bot.client.send_notice(message.nick, self.plugin.lang.get('feed_reviewed'))
+				self.bot.client.send_notice(message.nick, self.lang.get('feed_reviewed'))
 			elif args[1] in ['wrong', 'bad', 'no']:
 				cursor = self.connection.cursor()
 				cursor.execute('DELETE FROM feeds WHERE id = ?', (args[0],))
@@ -230,7 +230,7 @@ class RssPlugin(Plugin):
 			else:
 				self.bot.client.send_notice(message.nick, self.lang.get('review_syntax').replace('!', self.bot.settings.get('Bot', 'command_prefix')))
 		else:
-			self.bot.client.send_notice(message.nick, self.plugin.lang.get('review_syntax').replace('!', self.bot.settings.get('Bot', 'command_prefix')))			
+			self.bot.client.send_notice(message.nick, self.lang.get('review_syntax').replace('!', self.bot.settings.get('Bot', 'command_prefix')))			
 	
 	def destroy(self):
 		self.connection.commit()

@@ -22,70 +22,75 @@
 
 from gettext import gettext as _
 from luckybot.luckynet.protocols.irc import Format
+from luckybot.bot.plugins import Plugin
 
-def initialize():
-	plugin.register_command('quit', quit, help=_("Quit the bot"), args="[quit message]")
-	plugin.register_command('join', join_channel, help=_("Join a specified channel"), args="channel")
-	plugin.register_command('part', part_channel, help=_("Leave a specified channel"), args="channel")
-	plugin.register_command('eval', eval_code, help=_("Run python code from the bot"), args="code")
-	plugin.register_command('nick', change_nick, help=_("Change the nick of the bot"), args="new_nick")
+class BotActions(Plugin):
+	def initialize(self):
+		self.register_command('quit', self.quit, help=_("Quit the bot"), args="[quit message]")
+		self.register_command('join', self.join_channel, help=_("Join a specified channel"), args="channel")
+		self.register_command('part', self.part_channel, help=_("Leave a specified channel"), args="channel")
+		self.register_command('eval', self.eval_code, help=_("Run python code from the bot"), args="code")
+		self.register_command('nick', self.change_nick, help=_("Change the nick of the bot"), args="new_nick")
 
-def quit(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
+	def quit(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
+			
+		self.bot.client.send('QUIT :%s' % message.bot_args)
+		self.bot.client.connection.close()
+
+	def join_channel(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
 		
-	plugin.bot.client.send('QUIT :%s' % message.bot_args)
-	plugin.bot.client.connection.close()
+		if len(message.bot_args) == 0 or not message.bot_args.startswith('#'):
+			self.bot.client.send_notice(message.nick, _("No channel given"))
+			return
+		
+		self.bot.client.send('JOIN %s' % message.bot_args)
 
-def join_channel(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
-	
-	if len(message.bot_args) == 0 or not message.bot_args.startswith('#'):
-		plugin.bot.client.send_notice(message.nick, _("No channel given"))
-		return
-	
-	plugin.bot.client.send('JOIN %s' % message.bot_args)
+	def part_channel(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
+		
+		if len(message.bot_args) == 0:
+			message.bot_args = message.channel
+		
+		if not message.bot_args.startswith('#'):
+			self.bot.client.send_notice(message.nick, _("No channel given"))
+			return
+		
+		self.bot.client.send('PART %s' % message.bot_args)
 
-def part_channel(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
-	
-	if len(message.bot_args) == 0 or not message.bot_args.startswith('#'):
-		plugin.bot.client.send_notice(message.nick, _("No channel given"))
-		return
-	
-	plugin.bot.client.send('PART %s' % message.bot_args)
+	def eval_code(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
+		
+		if len(message.bot_args) == 0:
+			return
+		
+		r = None
+		
+		try:
+			exec message.bot_args
+		except Exception, e:
+			r = e
+		
+		if r == "" or r == None:
+			self.bot.client.send_pm(message.channel, _("No Result"))
+		else:
+			self.bot.client.send_pm(message.channel, _("Result:") + " " + str(r))
 
-def eval_code(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
-	
-	if len(message.bot_args) == 0:
-		return
-	
-	r = None
-	
-	try:
-		exec message.bot_args
-	except Exception, e:
-		r = e
-	
-	if r == "" or r == None:
-		plugin.bot.client.send_pm(message.channel, _("No Result"))
-	else:
-		plugin.bot.client.send_pm(message.channel, _("Result:") + " " + str(r))
-
-def change_nick(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
-	
-	if len(message.bot_args) == 0:
-		return
-	
-	plugin.bot.client.send('NICK %s' % message.bot_args)
+	def change_nick(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
+		
+		if len(message.bot_args) == 0:
+			return
+		
+		self.bot.client.send('NICK %s' % message.bot_args)

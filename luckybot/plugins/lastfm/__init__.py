@@ -31,9 +31,7 @@ except ImportError:
 import urllib2 as urllib
 from luckybot.luckynet.protocols.irc import Format
 from gettext import gettext as _
-
-def initialize():
-	plugin.register_command('lastfm', on_lastfm, help=_("Get some last.fm data. The optional 'data' argument can contain the following values: tracks, artists, weekly, which will get the top overall tracks, top overall artists or the weekly top tracks"), args="nick [data]")
+from luckybot.bot.plugins import Plugin
 
 class LastFMInfo(object):
 	"""
@@ -132,99 +130,103 @@ class LastFMInfo(object):
 			
 			i += 1
 		
-		return to_return	
+		return to_return
+		
+class LastFMPlugin(Plugin):
+	def initialize(self):
+		self.register_command('lastfm', self.on_lastfm, help=_("Get some last.fm data. The optional 'data' argument can contain the following values: tracks, artists, weekly, which will get the top overall tracks, top overall artists or the weekly top tracks"), args="nick [data]")	
 	
-def on_lastfm(message, keywords):
-	# Check which mode
-	args = message.bot_args.split(' ')
-	
-	if len(args) > 1:
-		if args[1] == 'tracks':
-			send_top_tracks(args[0], message)
-		elif args[1] == 'artists':
-			send_top_artists(args[0], message)
-		elif args[1] == 'weekly':
-			send_weekly_top(args[0], message)
+	def on_lastfm(self, message, keywords):
+		# Check which mode
+		args = message.bot_args.split(' ')
+		
+		if len(args) > 1:
+			if args[1] == 'tracks':
+				self.send_top_tracks(args[0], message)
+			elif args[1] == 'artists':
+				self.send_top_artists(args[0], message)
+			elif args[1] == 'weekly':
+				self.send_weekly_top(args[0], message)
+			else:
+				self.bot.client.send_notice(message.nick, _("Invalid argument, use 'tracks', 'artists' or 'weekly'"))
+		elif len(args) == 1:
+			self.send_now_playing(args[0], message)
 		else:
-			plugin.bot.client.send_notice(message.nick, _("Invalid argument, use 'tracks', 'artists' or 'weekly'"))
-	elif len(args) == 1:
-		send_now_playing(args[0], message)
-	else:
-		plugin.bot.client.send_notice(message.nick, _("No username specified"))
+			self.bot.client.send_notice(message.nick, _("No username specified"))
 
-def send_now_playing(user, message):
-	lastfm = LastFMInfo(user)
-	try:
-		title = lastfm.now_playing()
-	except:
-		import traceback
-		traceback.print_exc()
-		plugin.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
-	else:
-		if title == False:
-			plugin.bot.client.send_pm(message.channel, _("No track currently playing"))
+	def send_now_playing(self, user, message):
+		lastfm = LastFMInfo(user)
+		try:
+			title = lastfm.now_playing()
+		except:
+			import traceback
+			traceback.print_exc()
+			self.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
 		else:
-			plugin.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _('[%s] Last.FM Now Playing:%s %s') % (user, Format.bold(), title))
-	
-	del lastfm
+			if title == False:
+				self.bot.client.send_pm(message.channel, _("No track currently playing"))
+			else:
+				self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _('[%s] Last.FM Now Playing:%s %s') % (user, Format.bold(), title))
+		
+		del lastfm
 
-def send_top_tracks(user, message):
-	lastfm = LastFMInfo(user)
-	
-	try:
-		tracks = lastfm.get_top_tracks()
-	except:
-		import traceback
-		traceback.print_exc()
-		plugin.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
-	else:
-		if len(tracks) == 0:
-			plugin.bot.client.send_pm(message.channel, _("No top tracks available"))
+	def send_top_tracks(self, user, message):
+		lastfm = LastFMInfo(user)
+		
+		try:
+			tracks = lastfm.get_top_tracks()
+		except:
+			import traceback
+			traceback.print_exc()
+			self.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
 		else:
-			plugin.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _("Top tracks from %s") % user)
-			
-			i = 1
-			for track in tracks:
-				plugin.bot.client.send_pm(message.channel, Format.bold() + str(i) + ". " + Format.bold() + track)
-				i += 1
+			if len(tracks) == 0:
+				self.bot.client.send_pm(message.channel, _("No top tracks available"))
+			else:
+				self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _("Top tracks from %s") % user)
 				
-def send_top_artists(user, message):
-	lastfm = LastFMInfo(user)
-	
-	try:
-		artists = lastfm.get_top_artists()
-	except:
-		import traceback
-		traceback.print_exc()
-		plugin.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
-	else:
-		if len(artists) == 0:
-			plugin.bot.client.send_pm(message.channel, _("No top artists available"))
+				i = 1
+				for track in tracks:
+					self.bot.client.send_pm(message.channel, Format.bold() + str(i) + ". " + Format.bold() + track)
+					i += 1
+					
+	def send_top_artists(self, user, message):
+		lastfm = LastFMInfo(user)
+		
+		try:
+			artists = lastfm.get_top_artists()
+		except:
+			import traceback
+			traceback.print_exc()
+			self.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
 		else:
-			plugin.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _("Top artists from %s") % user)
-			
-			i = 1
-			for artist in artists:
-				plugin.bot.client.send_pm(message.channel, Format.bold() + str(i) + ". " + Format.bold() + artist)
-				i += 1
+			if len(artists) == 0:
+				self.bot.client.send_pm(message.channel, _("No top artists available"))
+			else:
+				self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _("Top artists from %s") % user)
+				
+				i = 1
+				for artist in artists:
+					self.bot.client.send_pm(message.channel, Format.bold() + str(i) + ". " + Format.bold() + artist)
+					i += 1
 
-def send_weekly_top(user, message):
-	lastfm = LastFMInfo(user)
-	
-	try:
-		tracks = lastfm.get_weekly_tracks()
-	except:
-		import traceback
-		traceback.print_exc()
-		plugin.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
-	else:
-		if len(tracks) == 0:
-			plugin.bot.client.send_pm(message.channel, _("No top tracks available"))
+	def send_weekly_top(self, user, message):
+		lastfm = LastFMInfo(user)
+		
+		try:
+			tracks = lastfm.get_weekly_tracks()
+		except:
+			import traceback
+			traceback.print_exc()
+			self.bot.client.send_pm(message.channel, _("Could not load data, probably the user doesn't exists"))
 		else:
-			plugin.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _("Weekly top tracks from %s") % user)
-			
-			i = 1
-			for track in tracks:
-				plugin.bot.client.send_pm(message.channel, Format.bold() + str(i) + ". " + Format.bold() + track)
-				i += 1
+			if len(tracks) == 0:
+				self.bot.client.send_pm(message.channel, _("No top tracks available"))
+			else:
+				self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + _("Weekly top tracks from %s") % user)
+				
+				i = 1
+				for track in tracks:
+					self.bot.client.send_pm(message.channel, Format.bold() + str(i) + ". " + Format.bold() + track)
+					i += 1
 	

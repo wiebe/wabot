@@ -22,57 +22,59 @@
 
 from gettext import gettext as _
 from luckybot.luckynet.protocols.irc import Format
+from luckybot.bot.plugins import Plugin
 
-def initialize():
-	plugin.register_command('load', load_plugin, help=_("Load a currently unloaded plugin"), args="plugin")
-	plugin.register_command('unload', unload_plugin, help=_("Unloads a given plugin"), args="plugin")
-	plugin.register_command('reload', reload_plugins, help=_("Reloads all bot plugins, or the specified plugin"), args="[plugin]")
+class PluginManagment(Plugin):
+	def initialize(self):
+		self.register_command('load', self.load_plugin, help=_("Load a currently unloaded plugin"), args="plugin")
+		self.register_command('unload', self.unload_plugin, help=_("Unloads a given plugin"), args="plugin")
+		self.register_command('reload', self.reload_plugins, help=_("Reloads all bot plugins, or the specified plugin"), args="[plugin]")
 
-def load_plugin(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
-	
-	if len(message.bot_args) == 0:
-		return
-	
-	for dir in plugin.manager.dirs:
-		success = False
+	def load_plugin(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
 		
-		if plugin.manager.load_plugin(dir, message.bot_args):
-			success = True
-			break
-	
-	if not success:
-		plugin.bot.client.send_pm(message.channel, Format.color('red') + Format.bold() + _("Could not load the plugin"))
-	else:
-		plugin.bot.client.send_pm(message.channel, Format.color('green') + _("Plugin succesfully loaded"))
-
-def unload_plugin(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
+		if len(message.bot_args) == 0:
+			return
 		
-	if len(message.bot_args) == 0:
-		return
-	
-	if not plugin.manager.unload_plugin(message.bot_args):
-		plugin.bot.client.send_pm(message.channel, Format.color('red') + Format.bold() + _("Could not unload the plugin"))
-	else:
-		plugin.bot.client.send_pm(message.channel, Format.color('green') + _("Plugin succesfully unloaded"))
-	
-def reload_plugins(message, keywords):
-	if not plugin.bot.auth.check_logged_in(message.nick):
-		plugin.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
-		return
-	
-	plugin.bot.client.send_pm(message.channel, Format.color('orange') + _("Reloading.."))
-	if len(message.bot_args) != 0:
-		success = plugin.manager.reload_plugin(message.bot_args)
-	else:
-		success = plugin.manager.reload_plugins()
-	
-	if not success:
-		plugin.bot.client.send_pm(message.channel, Format.color('red') + Format.bold() + _("Could not reload the plugin(s)"))
-	else:
-		plugin.bot.client.send_pm(message.channel, Format.color('green') + _("Plugin(s) succesfully reloaded"))
+		for dir in self.manager.dirs:
+			success = False
+			
+			if self.manager.load_plugin(dir, message.bot_args):
+				success = True
+				break
+		
+		if not success:
+			self.bot.client.send_pm(message.channel, Format.color('red') + Format.bold() + _("Could not load the plugin"))
+		else:
+			self.bot.client.send_pm(message.channel, Format.color('green') + _("Plugin succesfully loaded"))
+
+	def unload_plugin(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
+			
+		if len(message.bot_args) == 0:
+			return
+		
+		if not self.manager.unload_plugin(message.bot_args):
+			self.bot.client.send_pm(message.channel, Format.color('red') + Format.bold() + _("Could not unload the plugin"))
+		else:
+			self.bot.client.send_pm(message.channel, Format.color('green') + _("Plugin succesfully unloaded"))
+		
+	def reload_plugins(self, message, keywords):
+		if not self.bot.auth.check_logged_in(message.nick):
+			self.bot.client.send_notice(message.nick, _("You do not have enough rights to use this command"))
+			return
+		
+		self.bot.client.send_pm(message.channel, Format.color('orange') + _("Reloading.."))
+		if len(message.bot_args) != 0:
+			success = self.manager.reload_plugin(message.bot_args)
+		else:
+			success = self.manager.reload_plugins()
+		
+		if not success:
+			self.bot.client.send_pm(message.channel, Format.color('red') + Format.bold() + _("Could not reload the plugin(s)"))
+		else:
+			self.bot.client.send_pm(message.channel, Format.color('green') + _("Plugin(s) succesfully reloaded"))

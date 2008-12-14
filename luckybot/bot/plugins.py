@@ -40,8 +40,6 @@ class Plugin(object):
 		This class represents a (loaded) plugin
 	"""
 	
-	_instance = None
-	
 	def __init__(self, manager, plugins_dir, dirname):
 		self.plugins_dir = plugins_dir
 		self.dirname = dirname

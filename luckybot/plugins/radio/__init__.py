@@ -103,29 +103,40 @@ class Radio_3fm(BaseRadio):
 	def get_stream_url(self):
 		return 'http://cgi.omroep.nl/cgi-bin/shoutcastlive.pls?radio3live'
 
-class RadioPlugin(Plugin):
+class RadioPlugin(Plugin):	
+	def initialize(self):
+		self.register_command('radio', self.get_radio_np, help="Geeft wat er nu speelt op een bepaalde radio", args="radio_name")
+		self.register_command('radiolist', self.show_radio_list, help="Geeft een lijst van beschikbare radio stations")
+		self.register_command('stream', self.get_radio_stream, help="Geeft de stream URL om de radio te beluisteren", args="radio_name")
 
-def initialize():
-	plugin.register_command('radio', get_radio_np, help="Geeft wat er nu speelt op een bepaalde radio", args="radio_name")
-	plugin.register_command('radiolist', show_radio_list, help="Geeft een lijst van beschikbare radio stations")
-
-def get_radio_np(message, keywords):
-	radio = BaseRadio.get_radio(message.bot_args)
-	
-	if not radio == False:
-		np = radio.now_playing()
-		plugin.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + ("[%s]" % message.bot_args.lower().title()) + " " + Format.normal() + Format.bold() + ("%s - %s" % np))
-	else:
-		plugin.bot.client.send_pm(message.channel, "Radio bestaat niet")
+	def get_radio_np(self, message, keywords):
+		radio = BaseRadio.get_radio(message.bot_args)
 		
-def show_radio_list(message, keywords):
-	classes = BaseRadio.__subclasses__()
+		if not radio == False:
+			np = radio.now_playing()
+			
+			artist = np[0] or "Onbekend"
+			title = np[1] or "Onbekend"
+			self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + ("[%s]" % message.bot_args.lower().title()) + " " + Format.normal() + Format.bold() + ("%s - %s" % (artist, title)))
+		else:
+			self.bot.client.send_pm(message.channel, "Radio bestaat niet")
 	
-	plugin.bot.client.send_pm(message.nick, Format.color('darkblue') + Format.bold() + "Beschikbare radio stations")
-	for subclass in classes:
-		plugin.bot.client.send_pm(message.nick, subclass.__name__.lower().replace('radio_', '').title())
-	
-	plugin.bot.client.send_pm(message.nick, Format.bold() + "Typ %sradio [naam] om te kijken welk liedje er nu draait" % (plugin.bot.settings.get('Bot', 'command_prefix')))
+	def get_radio_stream(self, message, keywords):
+		radio = BaseRadio.get_radio(message.bot_args)
+		
+		if not radio == False:
+			self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + ("[Stream van %s]" % message.bot_args.lower().title()) + " " + Format.normal() + Format.bold() + radio.get_stream_url())
+		else:
+			self.bot.client.send_pm(message.channel, "Radio bestaat niet")
+				
+	def show_radio_list(self, message, keywords):
+		classes = BaseRadio.__subclasses__()
+		
+		self.bot.client.send_pm(message.nick, Format.color('darkblue') + Format.bold() + "Beschikbare radio stations")
+		for subclass in classes:
+			self.bot.client.send_pm(message.nick, subclass.__name__.lower().replace('radio_', '').title())
+		
+		self.bot.client.send_pm(message.nick, Format.bold() + "Typ %sradio [naam] om te kijken welk liedje er nu draait" % (self.bot.settings.get('Bot', 'command_prefix')))
 	
 		
 	
