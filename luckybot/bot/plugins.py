@@ -342,16 +342,9 @@ class Manager(object):
 			sys.path = sys.path[1:]
 			
 			plugin_cls = None
-			
-			print name
-			print '-' * 30
-			print
 			for cls in module_obj.__dict__.values():
 				if hasattr(cls, '__module__'):				
-					if  inspect.isclass(cls) and cls.__module__ == name:
-						print cls.__module__
-						print cls
-						print			
+					if  inspect.isclass(cls) and cls.__module__ == name:		
 						if issubclass(cls, Plugin):
 							plugin_cls = cls
 							break

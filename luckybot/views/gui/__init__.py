@@ -39,6 +39,7 @@ import socket
 import luckybot.path
 from luckybot.luckynet.connection import GlibConnection
 from gettext import gettext as _
+from luckybot.views.gui.config import ConfigWindow
 
 gtk.gdk.threads_init()
 
@@ -85,6 +86,10 @@ class GUIView(luckybot.views.base.BaseView, gobject.GObject):
 		return GlibConnection(socket.AF_INET, socket.SOCK_STREAM)	
 	
 	def on_close(self):
+		"""
+			Called when the window is closed
+		"""
+		
 		self.connected = False
 		self.toggle_connect_button()
 		self.data_other("Connection closed")
@@ -159,6 +164,17 @@ class GUIView(luckybot.views.base.BaseView, gobject.GObject):
 				self.bot.client.connection.close()
 			except:
 				pass
+	
+	def on_item_preferences(self, widget = None, event = None):
+		"""
+			shows the config window
+		"""
+		
+		config = ConfigWindow(self.bot)
+		response = config.run()
+		
+		print response
+		
 			
 	
 	def data_in(self, data):

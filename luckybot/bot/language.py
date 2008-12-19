@@ -26,6 +26,7 @@ class Language(object):
 	def __init__(self, language, defaults = {}):
 		self.language = language.lower()
 		self.parser = SafeConfigParser(defaults)
+		self.languages_available = []
 	
 	def read_language(self, path):
 		"""
@@ -33,6 +34,7 @@ class Language(object):
 		"""
 		
 		self.parser.read(path)
+		self.languages_available = self.parser.sections()
 	
 	def add_defaults(self, defaults):
 		for key, value in defaults.iteritems():
