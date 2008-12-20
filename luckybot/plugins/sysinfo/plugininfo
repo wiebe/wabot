@@ -1,0 +1,3 @@
+Name = "System Information Plugin"
+Description = "Displays information about the system you're bot is running on."
+Authors = ['Wiebe Verweij <wiebe@wiebelt.nl']

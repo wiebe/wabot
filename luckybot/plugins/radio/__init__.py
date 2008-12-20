@@ -1,7 +1,7 @@
 #
-# LuckyBot4, a python IRC bot
-# (c) Copyright 2008 by Lucas van Dijk
-# http://www.return1.net
+# Radio plugin
+# (c) Copyright 2008 by Wiebe Verweij
+# http://wiebelt.nl
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,125 +19,153 @@
 #
 # $Id$
 #
-
-try:
-	from xml.etree import ElementTree
-except ImportError:
-	try:
-		from elementtree import ElementTree
-	except ImportError:
-		raise
-		
+import xml.etree.cElementTree as ElementTree
 import urllib2 as urllib
-from luckybot.luckynet.protocols.irc import Format
+import string
+from string import Template
 from luckybot.bot.plugins import Plugin
+from luckybot.luckynet.protocols.irc import Format
 
-def get_xml(url):
-	data = urllib.urlopen(url)
-	contents = data.read()
+#		
+# RadioPlugin
+#
+class RadioPlugin(Plugin):
 	
-	contents = contents.replace('&', '&amp;')
-	tree = ElementTree.fromstring(contents)
-	
-	return tree
-
-class BaseRadio(object):	
-	@classmethod
-	def get_radio(self, name):
-		classes = self.__subclasses__()
-		for subclass in classes:
-			if subclass.__name__.lower() == ('radio_%s' % name).lower():
-				return subclass()
-
-		return False
-		
-	def now_playing(self):
-		raise NotImplementedError
-	
-	def get_stream_url(self):
-		raise NotImplementedError
-
-class Radio_538(BaseRadio):	
-	def now_playing(self):
-		root = get_xml('http://stream.radio538.nl/538play/nowplaying.xml')
-				
-		artist = root.find('now').find('artist').text
-		
-		if not artist or len(artist) == 0:
-			artist = root.find('previous').find('artist').text
-			title = root.find('previous').find('title').text
-			previous = True
-		else:
-			title = root.find('now').find('title').text
-			previous = False
-		
-		return (artist.lower().title(), title.lower().title())
-	
-	def get_stream_url(self):
-		return 'http://82.201.100.9:8000/radio538.m3u'
-
-class Radio_SlamFM(BaseRadio):	
-	def now_playing(self):
-		root = get_xml('http://www.slamfm.nl/slamfm/nowonair/Onair.XML')
-				
-		artist = root.find('Current').find('artistName').text
-		title = root.find('Current').find('titleName').text
-		
-		return (artist, title)
-	
-	def get_stream_url(self):
-		return 'http://nl.sitestat.com/slamfm/slam/s?slam.luister.itunes_winamp&ns_type=clickin'
-
-class Radio_3fm(BaseRadio):
-	def now_playing(self):
-		root = get_xml('http://www.3fm.nl/page/xml_daletfeed')
-		
-		artist = root.find('artist').text
-		title = root.find('title').text
-		
-		artist = artist or ""
-		title = title or ""
-		
-		return (artist.lower().title(), title.lower().title())
-	
-	def get_stream_url(self):
-		return 'http://cgi.omroep.nl/cgi-bin/shoutcastlive.pls?radio3live'
-
-class RadioPlugin(Plugin):	
 	def initialize(self):
-		self.register_command('radio', self.get_radio_np, help="Geeft wat er nu speelt op een bepaalde radio", args="radio_name")
-		self.register_command('radiolist', self.show_radio_list, help="Geeft een lijst van beschikbare radio stations")
-		self.register_command('stream', self.get_radio_stream, help="Geeft de stream URL om de radio te beluisteren", args="radio_name")
+		# Register commands
+		self.register_command('3fm', self.on_3fm, help=_('Laat zien welk nummer er nu op 3FM word gedraaid.'))
+		self.register_command('538', self.on_538, help=_('Laat zien welk nummer er nu op Radio 538 word gedraaid.'))
+		self.register_command('caz', self.on_caz, help=_('Laat zien welk nummer er nu op Caz word gedraaid.'))
+		self.register_command('qmusic', self.on_qmusic, help=_('Laat zien welk nummer er nu op Qmusic word gedraaid.'))
+		self.register_command('slamfm', self.on_slamfm, help=_('Laat zien welk nummer er nu op SlamFM word gedraaid.'))
+		
+		# Load model and view
+		self.model = Model()
+		self.view = View()
+		
+	
+	def on_3fm(self, message, keywords):
+		# Get data
+		data = self.model.get_3fm()
+		
+		# Format
+		msg = self.view.format_3fm(data['artist'], data['title'], data['program'])
+		
+		# Send the message
+		self.bot.client.send_pm(message.channel, msg)
+		
+	def on_538(self, message, keywords):
+		# Get data
+		data = self.model.get_538()
+		
+		# Format
+		msg = self.view.format_538(data['artist'], data['title'], data['program'], data['dj'])
+		
+		# Send the message
+		self.bot.client.send_pm(message.channel, msg)
+		
+	def on_caz(self, message, keywords):
+		pass
+		
+	def on_qmusic(self, message, keywords):
+		pass
+		
+	def on_slamfm(self, message, keywords):
+		pass
+		
 
-	def get_radio_np(self, message, keywords):
-		radio = BaseRadio.get_radio(message.bot_args)
+#
+# Model
+#
+class Model(object):
+
+	def get_xml(self, url):
+		data = urllib.urlopen(url, 15)
+		contents = data.read()	
+		contents = contents.replace('&', '&amp;')		
+		tree = ElementTree.fromstring(contents)
 		
-		if not radio == False:
-			np = radio.now_playing()
+		return tree
+		
+	def get_3fm(self):
+		# Music feed
+		m_feed = self.get_xml('http://www.3fm.nl/page/xml_daletfeed')
+		
+		# Program feed
+		p_feed = self.get_xml('http://www.3fm.nl/page/xml_onairfeed')
+		
+		# Get music data
+		artist = m_feed.find('artist').text
+		title = m_feed.find('title').text
+		
+		# Get program data
+		program = p_feed.find('program').text
+		link = p_feed.find('programlink').text
+		
+		return {'artist': artist, 'title': title, 'program': program, 'link': link}
+		
+	def get_538(self):
+		# Music feed
+		m_feed = self.get_xml('http://stream.radio538.nl/538play/nowplaying.xml')
+		
+		# Program feed
+		p_feed = self.get_xml('http://stream.radio538.nl/xml/onair_538.xml')
+		
+		# Get music data
+		artist = m_feed.find('artist').text
+		title = m_feed.find('title').text
+		
+		# Get program data
+		program = p_feed.find('showname').text
+		dj = p_feed.find('djname').text
+		
+		return {'artist': artist, 'title': title, 'program': program, 'dj': dj}
+		
+	def get_caz(self):
+		pass
+		
+	def get_qmusic(self):
+		pass
+		
+	def get_slamfm(self):
+		pass
+
+#
+# View
+#
+class View(object):
+
+	def format_3fm(self, artist, title, program):
+		# None naar Onbekend :)
+		if artist == None:
+			artist = 'Onbekend'
+		
+		if title == None:
+			title = 'Onbekend'
 			
-			artist = np[0] or "Onbekend"
-			title = np[1] or "Onbekend"
-			self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + ("[%s]" % message.bot_args.lower().title()) + " " + Format.normal() + Format.bold() + ("%s - %s" % (artist, title)))
-		else:
-			self.bot.client.send_pm(message.channel, "Radio bestaat niet")
-	
-	def get_radio_stream(self, message, keywords):
-		radio = BaseRadio.get_radio(message.bot_args)
+		if program == None: 
+			program = 'Onbekend'
+			
+		# Capitalize
+		artist = string.capwords(artist)
+		title = string.capwords(title)
 		
-		if not radio == False:
-			self.bot.client.send_pm(message.channel, Format.color('darkblue') + Format.bold() + ("[Stream van %s]" % message.bot_args.lower().title()) + " " + Format.normal() + Format.bold() + radio.get_stream_url())
-		else:
-			self.bot.client.send_pm(message.channel, "Radio bestaat niet")
-				
-	def show_radio_list(self, message, keywords):
-		classes = BaseRadio.__subclasses__()
+		# Make the message
+		msg = Template('[$c 3FM $n| Now playing:$c $artist $n-$c $title $n | Program:$c $program $n]')
+		msg = msg.substitute(c = Format.color('red'), n = Format.normal(), artist = artist, title = title, program = program)		
 		
-		self.bot.client.send_pm(message.nick, Format.color('darkblue') + Format.bold() + "Beschikbare radio stations")
-		for subclass in classes:
-			self.bot.client.send_pm(message.nick, subclass.__name__.lower().replace('radio_', '').title())
+		return msg
 		
-		self.bot.client.send_pm(message.nick, Format.bold() + "Typ %sradio [naam] om te kijken welk liedje er nu draait" % (self.bot.settings.get('Bot', 'command_prefix')))
-	
+	def format_538(self, artist, title, program, dj):
+		msg = Template('[$c 538 $n| Now playing:$c $artist $n-$c $title $n | Program:$c $program $n | DJ:$c $dj $n]')
+		msg = msg.substitute(c = Format.color('red'), n = Format.normal(), artist = artist, title = title, program = program, dj = dj)
+		pass
 		
-	
-	
+	def format_caz(self, artist, title, program):
+		pass
+		
+	def format_qmusic(self, artist, title, program):
+		pass
+		
+	def format_slamfm(self, artist, title, program):
+		pass

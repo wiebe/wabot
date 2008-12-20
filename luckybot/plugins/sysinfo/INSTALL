@@ -1,0 +1,9 @@
+Just throw it in the plugin directory and add the following to settings.ini:
+
+[SysInfo]
+sensors = false
+
+OR if you have lmsensors install (check this by trying to run sensors from the command line):
+
+[SysInfo]
+sensors = true
